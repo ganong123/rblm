@@ -85,7 +85,7 @@ the dependent variable is "y1". The firm identifier should be "f1".
 This is a relatively old code, we will be pushing an update extremely soon!
 
 ```{r}
-res = m2.mini.estimate(ad$jdata,ad$sdata,model0 = model,method = "fixb")
+res = m2.mini.estimate(ad$jdata,ad$sdata,model0 = model,method = "fixb",bigk = 1)
 ```
 
 We can show the decompositions next to each other:

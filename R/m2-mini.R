@@ -654,9 +654,9 @@ m2.mini.estimate <- function(jdata,sdata,norm=1,model0=c(),method="ns",withx=FAL
   flog.info("getting residual wage variances in movers")
   if (bigk==0) {
     setkey(jdata,j1,j2)
-    YY1 = c(mcast(jdata[,mvar(y1),list(j1,j2)],"V1","j2","j1",c(nf,nf),0))
+    YY1 = c(mcast(jdata[,var(y1),list(j1,j2)],"V1","j2","j1",c(nf,nf),0))
     YY2 = c(mcast(jdata[,mcov(y1,y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)) #jdata[,mcov(y1,y2),list(j1,j2)][,V1]
-    YY3 = c(mcast(jdata[,mvar(y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)) #jdata[,mvar(y2),list(j1,j2)][,V1]
+    YY3 = c(mcast(jdata[,var(y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)) #jdata[,mvar(y2),list(j1,j2)][,V1]
     XX1 = array(0,c(nf^2, nf^2 + 2*nf))
     XX2 = array(0,c(nf^2, nf^2 + 2*nf))
     XX3 = array(0,c(nf^2, nf^2 + 2*nf))
@@ -692,9 +692,9 @@ m2.mini.estimate <- function(jdata,sdata,norm=1,model0=c(),method="ns",withx=FAL
   } else {
     # we use a simpler approach here, and we ignore the EEsd and focus on the
     # eps_sd
-    YY1 = mcast(jdata[,mvar(y1),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
+    YY1 = mcast(jdata[,var(y1),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
     YY2 = mcast(jdata[,mcov(y1,y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
-    YY3 = mcast(jdata[,mvar(y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
+    YY3 = mcast(jdata[,var(y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
     Wm   = mcast(jdata[,.N,list(j1,j2)],"N","j2","j1",c(nf,nf),0)
     EEsd = array(0,c(nf,nf))
     eps1_sd = array(0,c(nf))
@@ -717,8 +717,8 @@ m2.mini.estimate <- function(jdata,sdata,norm=1,model0=c(),method="ns",withx=FAL
   # function which computes the variance terms
   getEsd <- function(sdata) {
     setkey(sdata,j1)
-    YY1 = sdata[,mvar(y1),list(j1)][,V1] - eps1_sd^2
-    YY2 = sdata[,mvar(y2),list(j1)][,V1] - eps2_sd^2
+    YY1 = sdata[,var(y1),list(j1)][,V1] - eps1_sd^2
+    YY2 = sdata[,var(y2),list(j1)][,V1] - eps2_sd^2
     XX1 = diag(B1^2)
     XX2 = diag(B2^2)
     W = sdata[,.N,list(j1)][,N]
@@ -1044,14 +1044,14 @@ extract.variances <- function(jdata,sdata,B1,B2,rr=list(),na.rm=F) {
 
   # compute the variance of espilon conditional on l1, l2
   espilon_var_l1
-  l2 = jdata[, list( mvar(y1) - mcov(y1,y2) * B1[j1]/B2[j2] ,.N) , list(j1,j2)]
+  l2 = jdata[, list( var(y1) - mcov(y1,y2) * B1[j1]/B2[j2] ,.N) , list(j1,j2)]
   if (na.rm==TRUE) espilon_var_l1l2[ is.na(V1), V1:=0 ];
 
   # compute the variance of espilon conditional on l1, l2
   epsilon_var_l  = espilon_var_l1l2[ , weighted.mean(V1,N) , j1][, V1]
 
   # compute the variance of alpha conditional on l
-  alpha_var_l = (sdata[,mvar(y),j][,V1] - epsilon_var_l)/b_l^2
+  alpha_var_l = (sdata[,var(y),j][,V1] - epsilon_var_l)/b_l^2
 
   rr$espilon_var_l1l2 = acast(espilon_var_l1l2,j1~j2,value.var = "V1")
   rr$epsilon_var_l    = epsilon_var_l
