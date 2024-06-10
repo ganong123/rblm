@@ -655,7 +655,7 @@ m2.mini.estimate <- function(jdata,sdata,norm=1,model0=c(),method="ns",withx=FAL
   if (bigk==0) {
     setkey(jdata,j1,j2)
     YY1 = c(mcast(jdata[,var(y1),list(j1,j2)],"V1","j2","j1",c(nf,nf),0))
-    YY2 = c(mcast(jdata[,mcov(y1,y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)) #jdata[,mcov(y1,y2),list(j1,j2)][,V1]
+    YY2 = c(mcast(jdata[,cov(y1,y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)) #jdata[,mcov(y1,y2),list(j1,j2)][,V1]
     YY3 = c(mcast(jdata[,var(y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)) #jdata[,mvar(y2),list(j1,j2)][,V1]
     XX1 = array(0,c(nf^2, nf^2 + 2*nf))
     XX2 = array(0,c(nf^2, nf^2 + 2*nf))
@@ -693,7 +693,7 @@ m2.mini.estimate <- function(jdata,sdata,norm=1,model0=c(),method="ns",withx=FAL
     # we use a simpler approach here, and we ignore the EEsd and focus on the
     # eps_sd
     YY1 = mcast(jdata[,var(y1),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
-    YY2 = mcast(jdata[,mcov(y1,y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
+    YY2 = mcast(jdata[,cov(y1,y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
     YY3 = mcast(jdata[,var(y2),list(j1,j2)],"V1","j2","j1",c(nf,nf),0)
     Wm   = mcast(jdata[,.N,list(j1,j2)],"N","j2","j1",c(nf,nf),0)
     EEsd = array(0,c(nf,nf))
@@ -865,6 +865,7 @@ m2.mini.vdec <- function(model,nsim,stayer_share=1,ydep="y1",do_interacted_reg=1
   sdata.sim = m2.mini.simulate.stayers(model,NNs)
   jdata.sim = m2.mini.simulate.movers(model,NNm)
   sdata.sim = rbind(sdata.sim[,list(j1,k=alpha,y1,y2)],jdata.sim[,list(j1,k=alpha,y1,y2)])
+  flog.info("test")
   proj_unc  = lin.proja(sdata.sim,ydep,"k","j1",do_interacted_reg=do_interacted_reg);
 
   return(proj_unc)
@@ -1040,11 +1041,11 @@ m2.mini.plotw <- function(model,qt=6,getvals=F) {
 extract.variances <- function(jdata,sdata,B1,B2,rr=list(),na.rm=F) {
 
   # compute the variance of espilon conditional on l1, l2
-  alpha_var_l1l2 = acast(jdata[, list(V1 = mcov(y1,y2) /( B1[j1] * B2[j2])) , list(j1,j2)],j1~j2)
+  alpha_var_l1l2 = acast(jdata[, list(V1 = cov(y1,y2) /( B1[j1] * B2[j2])) , list(j1,j2)],j1~j2)
 
   # compute the variance of espilon conditional on l1, l2
   espilon_var_l1
-  l2 = jdata[, list( var(y1) - mcov(y1,y2) * B1[j1]/B2[j2] ,.N) , list(j1,j2)]
+  l2 = jdata[, list( var(y1) - cov(y1,y2) * B1[j1]/B2[j2] ,.N) , list(j1,j2)]
   if (na.rm==TRUE) espilon_var_l1l2[ is.na(V1), V1:=0 ];
 
   # compute the variance of espilon conditional on l1, l2

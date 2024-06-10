@@ -4,7 +4,7 @@
 #' @export
 lin.proja <- function(sdata,y_col="y",k_col="k",j_col="j",do_interacted_reg=1) {
   rr = list()
-
+  flog.info("test")
   sdata2 = copy(data.table(sdata))
   sdata2[,y_imp := get(y_col)]
   sdata2[,k_imp := get(k_col)]
@@ -21,7 +21,7 @@ lin.proja <- function(sdata,y_col="y",k_col="k",j_col="j",do_interacted_reg=1) {
 
   if (do_interacted_reg==1) {
     fit2 = lm(y_imp ~ 0+  k_imp:factor(j) + factor(j),sdata2)
-    rr$rsq2 = 1-mean(resid(fit2)^2)/var(sdata2$y_imp)
+    rr$rsq2 = NA #1-mean(resid(fit2)^2)/var(sdata2$y_imp)
   } else {
     rr$rsq2=NA
   }
